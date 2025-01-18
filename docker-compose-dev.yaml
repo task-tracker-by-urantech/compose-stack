@@ -1,0 +1,78 @@
+services:
+  task-tracker-db:
+    image: postgres
+    ports:
+      - "15432:5432"
+    platform: linux/amd64
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /data/postgres
+    volumes:
+      - db-data:/data/postgres
+
+  kafka:
+    image: wurstmeister/kafka:latest
+    ports:
+      - "9092:9092"
+    restart: unless-stopped
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: ${KAFKA_ADVERTISED_HOST_NAME}
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "email-sending-tasks:1:1"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - zookeeper
+
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    ports:
+      - "2181:2181"
+    restart: unless-stopped
+
+  rest-api-app:
+    build:
+      context: /Users/urantech/IdeaProjects/projects/task-tracker-services/rest-api
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      KAFKA_BOOTSTRAP_SERVER_URL: ${KAFKA_BOOTSTRAP_SERVER_URL}
+    depends_on:
+      - task-tracker-db
+      - kafka
+
+  user-service-app:
+    build:
+      context: /Users/urantech/IdeaProjects/projects/task-tracker-services/user-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    depends_on:
+      - task-tracker-db
+
+  email-sender-app:
+    build:
+      context: /Users/urantech/IdeaProjects/projects/task-tracker-services/email-sender
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      KAFKA_BOOTSTRAP_SERVER_URL: ${KAFKA_BOOTSTRAP_SERVER_URL}
+    depends_on:
+      - kafka
+
+volumes:
+  db-data:
