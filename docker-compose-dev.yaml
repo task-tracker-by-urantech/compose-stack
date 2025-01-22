@@ -32,6 +32,15 @@ services:
       - "2181:2181"
     restart: unless-stopped
 
+  eureka-server-app:
+    build:
+      context: /Users/urantech/IdeaProjects/projects/task-tracker-services/eureka-server
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+
   rest-api-app:
     build:
       context: /Users/urantech/IdeaProjects/projects/task-tracker-services/rest-api
@@ -47,6 +56,7 @@ services:
     depends_on:
       - task-tracker-db
       - kafka
+      - eureka-server-app
 
   user-service-app:
     build:
@@ -61,6 +71,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
     depends_on:
       - task-tracker-db
+      - eureka-server-app
 
   email-sender-app:
     build:
@@ -73,6 +84,21 @@ services:
       KAFKA_BOOTSTRAP_SERVER_URL: ${KAFKA_BOOTSTRAP_SERVER_URL}
     depends_on:
       - kafka
+      - eureka-server-app
+
+  report-service-app:
+    build:
+      context: /Users/urantech/IdeaProjects/projects/task-tracker-services/report-service
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      KAFKA_BOOTSTRAP_SERVER_URL: ${KAFKA_BOOTSTRAP_SERVER_URL}
+    depends_on:
+      - kafka
+      - eureka-server-app
+      - rest-api-app
 
 volumes:
   db-data:
