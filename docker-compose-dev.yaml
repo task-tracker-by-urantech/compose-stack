@@ -82,6 +82,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: dev
       KAFKA_BOOTSTRAP_SERVER_URL: ${KAFKA_BOOTSTRAP_SERVER_URL}
+      SPRING_MAIL_USERNAME: ${MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD: ${MAIL_PASSWORD}
     depends_on:
       - kafka
       - eureka-server-app
