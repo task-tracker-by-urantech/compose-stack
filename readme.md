@@ -8,4 +8,4 @@
 
 This service is built to simplify project management and boost team productivity.
 
-![Link to the image](task-tracker-services.png)
+![Link to the image](task-tracker-schema.png)
