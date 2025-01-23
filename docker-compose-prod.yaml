@@ -34,7 +34,7 @@ services:
 
   eureka-server-app:
     build:
-      #      context: /Users/urantech/IdeaProjects/projects/task-tracker-services/eureka-server
+      context: /opt/task-tracker/eureka-server
       dockerfile: Dockerfile
     environment:
       SPRING_PROFILES_ACTIVE: prod
@@ -43,7 +43,7 @@ services:
 
   rest-api-app:
     build:
-      #      context: /Users/urantech/IdeaProjects/projects/task-tracker-services/rest-api
+      context: /opt/task-tracker/rest-api
       dockerfile: Dockerfile
     environment:
       SPRING_PROFILES_ACTIVE: prod
@@ -61,7 +61,7 @@ services:
 
   user-service-app:
     build:
-      #      context: /Users/urantech/IdeaProjects/projects/task-tracker-services/user-service
+      context: /opt/task-tracker/user-service
       dockerfile: Dockerfile
     environment:
       SPRING_PROFILES_ACTIVE: prod
@@ -76,7 +76,7 @@ services:
 
   email-sender-app:
     build:
-      #      context: /Users/urantech/IdeaProjects/projects/task-tracker-services/email-sender
+      context: /opt/task-tracker/email-sender
       dockerfile: Dockerfile
     environment:
       SPRING_PROFILES_ACTIVE: prod
@@ -91,7 +91,7 @@ services:
 
   report-service-app:
     build:
-      #      context: /Users/urantech/IdeaProjects/projects/task-tracker-services/report-service
+      context: /opt/task-tracker/report-service
       dockerfile: Dockerfile
     environment:
       SPRING_PROFILES_ACTIVE: prod
